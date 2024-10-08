@@ -1,21 +1,17 @@
 #ifndef SPMV_H
 #define SPMV_H
 
-typedef struct {
-    unsigned int n;      // number of rows (or cols for square matrix)
-    double *values;      // non-zero values
-    unsigned int *col_indices; // column indices of the non-zero values
-    unsigned int *row_ptr;     // indices in values[] where each row starts
-} CSRMatrix;
+#include <stddef.h>        // Include stddef.h for size_t
+#include <gsl/gsl_spmatrix.h>
+#include <gsl/gsl_spblas.h>
 
 // Dense matrix-vector multiplication
 int my_dense(const unsigned int n, const double mat[], double vec[], double result[]);
 
-// Sparse matrix-vector multiplication in CSR format
-int my_sparse(const unsigned int n, CSRMatrix csr, double vec[], double result[]);
+// Convert dense matrix to GSL sparse matrix format (CSR)
+gsl_spmatrix* convert_to_gsl_sparse(double *mat, unsigned int n);
 
-// Convert dense matrix to CSR format
-CSRMatrix convert_to_CSR(double *mat, unsigned int n);
-void free_CSR(CSRMatrix *csr);
+// Free memory for GSL sparse matrix
+void free_gsl_sparse(gsl_spmatrix *sparse);
 
 #endif
