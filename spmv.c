@@ -7,7 +7,7 @@
 #include "timer.h"
 #include "spmv.h"
 
-#define DEFAULT_SIZE 1024
+#define DEFAULT_SIZE 4056
 #define DEFAULT_DENSITY 0.25
 
 unsigned int populate_sparse_matrix(double mat[], unsigned int n, double density, unsigned int seed)
@@ -120,6 +120,26 @@ int main(int argc, char *argv[])
   //
 
   // Convert mat to a sparse format: CSR
+
+  // Convert dense matrix to CSR
+  CSRMatrix csr = convert_to_CSR(mat, size);
+
+  // Use your own sparse implementation
+  printf("Sparse computation\n----------------\n");
+  timestamp(&start);
+
+  my_sparse(size, csr, vec, mysol);
+
+  timestamp(&now);
+  printf("Time taken by my sparse matrix-vector product: %ld ms\n", diff_milli(&start, &now));
+
+  if (check_result(refsol, mysol, size) == 1)
+      printf("Result is ok!\n");
+  else
+      printf("Result is wrong!\n");
+
+  // Free the CSR resources
+  free_CSR(&csr);
   // Use the gsl_spmatrix struct as datatype
 
   //
